@@ -1,1 +1,2 @@
-# emqx-kafka-bridge
+# EMQX kafka bridge
+
