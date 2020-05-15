@@ -200,7 +200,7 @@ on_message_publish(Message = #message{topic = Topic, flags = #{retain := Retain}
             tm => calendar:local_time()},
     Kafka = proplists:get_value(bridges, _Env),
     %OnMessagePublishTopic = proplists:get_value(on_message_publish_topic, Kafka),
-    OnMessagePublishTopic = proplists:get_value(topic, Kafka),
+    OnMessagePublishTopic = proplists:get_value(on_message_publish_topic, Kafka),
     produce_kafka_message(list_to_binary(OnMessagePublishTopic), Params, FromClientId, _Env),
     {ok, Message}.
 
