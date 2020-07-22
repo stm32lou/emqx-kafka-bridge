@@ -286,21 +286,28 @@ unload() ->
   emqx:unhook('message.dropped', {?MODULE, on_message_dropped}).
 
 brod_load(_Env) ->
-  {ok, _} = application:ensure_all_started(gproc),
+  %%{ok, _} = application:ensure_all_started(gproc),
   {ok, _} = application:ensure_all_started(brod),
   {ok, Kafka} = application:get_env(?MODULE, bridges),
   KafkaBootstrapHost = proplists:get_value(bootstrap_broker_host, Kafka),
   KafkaBootstrapPort = proplists:get_value(bootstrap_broker_port, Kafka),
   KafkaBootstrapEndpoints = [{KafkaBootstrapHost, KafkaBootstrapPort}],
   ClientConfig = [{auto_start_producers, true}, {default_producer_config, []}, {reconnect_cool_down_seconds, 10}, {reconnect_cool_down_seconds, 10}],
+  %%ClientConfig = [],%% socket error recovery
+  %%Topic = proplists:get_value(on_message_publish_topic, Kafka),
+  %%Partition = 0,  
+
   ok = brod:start_client(KafkaBootstrapEndpoints, brod_client_1, ClientConfig),
+
+  %%ok = brod:start_producer(brod_client_1, Topic, _ProducerConfig = []),
+
   % emqx_metrics:inc('bridge.kafka.connected'),
   io:format("load brod with ~p~n", [KafkaBootstrapEndpoints]).
 
 brod_unload() ->
-  application:stop(brod),
-  % emqx_metrics:inc('bridge.kafka.disconnected'),
   io:format("unload brod~n"),
+  % application:stop(brod),
+  % emqx_metrics:inc('bridge.kafka.disconnected'),
   ok.
 
 getPartition(Key) ->
